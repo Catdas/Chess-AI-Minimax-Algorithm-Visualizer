@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI – Minimax Algorithm Visualizer</title>
+  <meta name="description" content="Interactive educational dashboard visually demonstrating how a Chess AI uses the Minimax algorithm step by step.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="header-title-box">
+      <div class="header-icon">♟️</div>
+      <div>
+        <h1>Chess AI – Minimax Algorithm Visualizer</h1>
+        <p class="header-subtitle">Interactive Step-by-Step Educational AI Demonstration Dashboard</p>
+      </div>
+    </div>
+    
+    <div class="header-controls">
+      <div class="preset-select-wrapper">
+        <label for="preset-select">Preset Scenario:</label>
+        <select id="preset-select">
+          <option value="tactical_fork" selected>Tactical Knight Fork</option>
+          <option value="midgame">Midgame Attack</option>
+          <option value="pawn_endgame">Endgame Pawn Race</option>
+          <option value="standard">Standard Opening</option>
+        </select>
+      </div>
+
+      <div class="depth-select-wrapper">
+        <label for="depth-select">Search Depth:</label>
+        <select id="depth-select">
+          <option value="1">Depth 1 (Direct Moves)</option>
+          <option value="2" selected>Depth 2 (Lookahead 2 turns)</option>
+          <option value="3">Depth 3 (Lookahead 3 turns)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main 2-Column Dashboard Grid -->
+  <main class="dashboard-grid">
+
+    <!-- LEFT COLUMN: Chessboard & Main Controls -->
+    <section class="dashboard-col">
+
+      <!-- Chessboard Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>🎯</span> Interactive Chessboard</h2>
+          <span class="card-badge badge-blue">AI = MAX (White)</span>
+        </div>
+
+        <div class="chessboard-container">
+          <div class="board-wrapper">
+            <div id="chessboard" class="chessboard"></div>
+          </div>
+
+          <!-- Status Banner -->
+          <div class="game-status-banner">
+            <div class="status-indicator">
+              <span class="status-dot"></span>
+              <span id="status-text">Ready. Click "Run Minimax AI" to begin.</span>
+            </div>
+            <div class="eval-score-badge" id="eval-badge">+0.0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Panel Card -->
+      <div class="card controls-panel">
+        <div class="card-header">
+          <h2 class="card-title"><span>⚡</span> Algorithm Controls</h2>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-run" class="btn btn-primary">🚀 Run Minimax AI</button>
+          <button id="btn-step" class="btn btn-secondary" disabled>⏭ Next Step</button>
+          <button id="btn-auto" class="btn btn-success" disabled>▶ Auto Play</button>
+          <button id="btn-reset" class="btn btn-secondary">🔄 Reset</button>
+        </div>
+
+        <div class="speed-control-wrapper">
+          <span>Animation Speed:</span>
+          <input type="range" id="speed-range" min="0.5" max="3" step="0.5" value="1">
+          <span id="speed-val">1x</span>
+        </div>
+      </div>
+
+      <!-- Educational Concepts Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>📚</span> Key Concepts & Tooltips</h2>
+        </div>
+        <div class="education-grid">
+          <div class="edu-item">
+            <div class="edu-item-header">
+              <span style="color:var(--max-blue)">●</span> MAX (AI Player)
+            </div>
+            <p>Tries to <b>maximize</b> the position evaluation score.</p>
+          </div>
+          <div class="edu-item">
+            <div class="edu-item-header">
+              <span style="color:var(--min-orange)">●</span> MIN (Opponent)
+            </div>
+            <p>Assumed to choose the move that <b>minimizes</b> the AI's score.</p>
+          </div>
+          <div class="edu-item">
+            <div class="edu-item-header">
+              <span style="color:var(--best-green)">●</span> Minimax Principle
+            </div>
+            <p>Selects the move with the <b>best guaranteed worst-case</b> outcome.</p>
+          </div>
+          <div class="edu-item">
+            <div class="edu-item-header">
+              <span>📊</span> Evaluation Score
+            </div>
+            <p>Numerical estimate combining Material + Position values.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: Minimax Visualizer & Execution Panels -->
+    <section class="dashboard-col">
+
+      <!-- Minimax Step Progress Bar -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>📈</span> Minimax Algorithm Steps</h2>
+        </div>
+        <div class="step-wizard">
+          <div class="step-item active" id="step-1">
+            <div class="step-number">1</div>
+            <div class="step-label">Generate Moves</div>
+          </div>
+          <div class="step-item" id="step-2">
+            <div class="step-number">2</div>
+            <div class="step-label">MAX (AI Turn)</div>
+          </div>
+          <div class="step-item" id="step-3">
+            <div class="step-number">3</div>
+            <div class="step-label">MIN (Opponent)</div>
+          </div>
+          <div class="step-item" id="step-4">
+            <div class="step-number">4</div>
+            <div class="step-label">Evaluate Positions</div>
+          </div>
+          <div class="step-item" id="step-5">
+            <div class="step-number">5</div>
+            <div class="step-label">Select Best Move</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Minimax Search Tree Card -->
+      <div class="card tree-viewport-card">
+        <div class="card-header">
+          <h2 class="card-title"><span>🌳</span> Dynamic Search Tree Visualization</h2>
+          <div style="display:flex; gap:0.5rem; font-size:0.75rem;">
+            <span class="card-badge badge-blue">MAX Node</span>
+            <span class="card-badge badge-orange">MIN Node</span>
+            <span class="card-badge badge-green">Best Move</span>
+          </div>
+        </div>
+        <div class="tree-container">
+          <svg id="tree-svg"></svg>
+        </div>
+      </div>
+
+      <!-- Position Evaluation Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>🧮</span> Position Evaluation Breakdown</h2>
+        </div>
+        <div class="eval-breakdown-grid" id="eval-breakdown">
+          <div class="eval-card">
+            <div class="eval-card-header">No Evaluation Yet</div>
+            <div class="eval-row"><span>Click "Run Minimax AI" to evaluate candidate moves</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Algorithm Execution Terminal Log -->
+      <div class="card terminal-card">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <div class="terminal-title">minimax_engine_v1.0.log</div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+          <div class="terminal-line"><span class="log-prefix">></span> <span class="log-info">Minimax engine ready. Select a scenario and press "Run Minimax AI".</span></div>
+        </div>
+      </div>
+
+      <!-- Current AI Decision Explanation -->
+      <div class="card explanation-card" id="explanation-card">
+        <div class="explanation-title">
+          <span>🧠</span> AI Decision Explanation
+        </div>
+        <div class="explanation-text" id="explanation-text">
+          Run the algorithm to see the visual proof of why MAX selects the move with the highest guaranteed score.
+        </div>
+        <div class="math-proof-box" id="math-proof">
+          Formula: max(min(Move A), min(Move B), min(Move C))
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
